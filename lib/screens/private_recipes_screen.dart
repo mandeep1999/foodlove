@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'file:///C:/Users/mandy/Desktop/practice/food_love/lib/widgets/recipe.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:foodlove/constants/constants.dart';
 import 'package:foodlove/models/recipe_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:foodlove/widgets/recipe.dart';
 
 
 class PrivateRecipeScreen extends StatefulWidget {
