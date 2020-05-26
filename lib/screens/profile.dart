@@ -6,6 +6,7 @@ import 'package:foodlove/screens/Home.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:foodlove/screens/loading.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -79,8 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen>{
                         showSpinner = false;
                       });
                       Navigator.of(context)
-                          .pushNamedAndRemoveUntil(Home
-                          .id, (route) => false);
+                          .pushNamedAndRemoveUntil(LoadingScreen.id, (route) => false);
                     }},
           ),
         ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:foodlove/component/rounded_button.dart';
 import 'package:foodlove/constants/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:foodlove/screens/profile.dart';
 import 'package:provider/provider.dart';
 import 'package:foodlove/models/task_data.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -134,7 +135,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       if(newUser!=null)
                       {
                         await Provider.of<TaskData>(context).getUser();
-                        Navigator.pushNamed(context, LoadingScreen.id);
+                        Navigator.pushNamed(context, ProfileScreen.id);
                       }
                       setState(() {
                         toggleSpinner();

@@ -87,6 +87,7 @@ class TaskData extends ChangeNotifier {
     _auth.signOut();
     print('sign out');
     url = null;
+    pro = false;
     userName = '';
     _tasks.clear();
     notifyListeners();
