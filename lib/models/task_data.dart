@@ -5,7 +5,6 @@ import 'package:foodlove/models/task.dart';
 import 'dart:collection';
 import 'package:foodlove/models/profile.dart';
 
-
 class TaskData extends ChangeNotifier {
   List<Task> _tasks = [];
 
@@ -16,29 +15,36 @@ class TaskData extends ChangeNotifier {
   String url;
   bool pro;
 
+  Future<void> setName() async {
+    String name =
+        loggedInUser.email.substring(0, loggedInUser.email.indexOf('@'));
+    await _firestore
+        .collection("profiles")
+        .document(loggedInUser.email)
+        .setData({'email': loggedInUser.email,'name' : name,'pro' : false});
+  }
 
   Future<void> setProfile(name, url) async {
     name = name[0].toUpperCase() + name.substring(1);
-    await _firestore.collection("profiles")
+    await _firestore
+        .collection("profiles")
         .document(loggedInUser.email)
-        .setData({
-      'email': loggedInUser.email,
+        .updateData({
       'name': name,
       'url': url,
-      'pro': false,
     });
     await getProfile();
     notifyListeners();
   }
+
   Future<void> setPro() async {
-    await _firestore.collection("profiles")
+    await _firestore
+        .collection("profiles")
         .document(loggedInUser.email)
         .updateData({
       'pro': true,
     });
   }
-
-
 
   Future<void> getProfile() async {
     final items = await _firestore.collection('profiles').getDocuments();
@@ -60,6 +66,7 @@ class TaskData extends ChangeNotifier {
   String get getEmail {
     return loggedInUser.email;
   }
+
   Future<void> getUser() async {
     try {
       final user = await _auth.currentUser();
@@ -106,7 +113,10 @@ class TaskData extends ChangeNotifier {
   }
 
   Future<void> addTask(String newTaskTitle, String newTaskTitleQ) async {
-   await  _firestore.collection('list').document(DateTime.now().toString()).setData({
+    await _firestore
+        .collection('list')
+        .document(DateTime.now().toString())
+        .setData({
       'email': loggedInUser.email,
       'name': newTaskTitle,
       'quantity': newTaskTitleQ,
@@ -114,14 +124,19 @@ class TaskData extends ChangeNotifier {
     await listStream();
     notifyListeners();
   }
+
   Future<void> copyTask(String newTaskTitle, String newTaskTitleQ) async {
-    await _firestore.collection('list').document(DateTime.now().toString()).setData({
+    await _firestore
+        .collection('list')
+        .document(DateTime.now().toString())
+        .setData({
       'email': loggedInUser.email,
       'name': newTaskTitle,
       'quantity': newTaskTitleQ,
     });
   }
-  Future<void> copyStream()async{
+
+  Future<void> copyStream() async {
     await listStream();
     notifyListeners();
   }
@@ -155,7 +170,7 @@ class TaskData extends ChangeNotifier {
   }
 
   Future<void> clearList() async {
-   await _firestore.collection('list').getDocuments().then((snapshot) {
+    await _firestore.collection('list').getDocuments().then((snapshot) {
       for (DocumentSnapshot ds in snapshot.documents) {
         if (ds.data['email'] == loggedInUser.email) {
           ds.reference.delete();
@@ -166,5 +181,4 @@ class TaskData extends ChangeNotifier {
     _tasks.clear();
     notifyListeners();
   }
-
 }
