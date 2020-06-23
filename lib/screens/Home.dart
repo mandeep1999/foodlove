@@ -1,9 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:foodlove/component/rounded_button.dart';
 import 'package:foodlove/screens/add_task.dart';
 import 'package:foodlove/screens/chat_screen.dart';
+import 'dart:io';
 import 'package:foodlove/screens/profile.dart';
 import 'package:foodlove/screens/recipe_list_private.dart';
 import 'package:foodlove/screens/recipe_screen.dart';
@@ -22,11 +26,15 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
+  final _auth = FirebaseAuth.instance;
+  final Firestore _db = Firestore.instance;
+  final FirebaseMessaging  _fcm = FirebaseMessaging();
   AnimationController controller;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _saveDeviceToken();
     controller = AnimationController(
       duration: Duration(milliseconds: 1500),
       vsync: this,
@@ -35,6 +43,31 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
     controller.addListener(() {
       setState(() {});
     });
+    _fcm.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print("onMessage : $message");
+        final snackbar = SnackBar(
+          content: Text(message['notification']['title']),
+          action: SnackBarAction(
+            label: 'Go',
+            onPressed: () => null,
+          ),
+        );
+        Scaffold.of(context).showSnackBar(snackbar);
+      },
+    );
+  }
+  _saveDeviceToken() async{
+    String uid = Provider.of<TaskData>(context,listen: false).userEmail;
+    String fcmToken = await _fcm.getToken();
+    if(fcmToken!= null){
+      var tokenRef = _db.collection('profiles').document(uid).collection('tokens').document(fcmToken);
+      await tokenRef.setData({
+        'token' : fcmToken,
+        'createdAt' : FieldValue.serverTimestamp(),
+        'platform'  :Platform.operatingSystem
+      });
+    }
   }
   @override
   void dispose() {
